@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>월별 등록 스탬프</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 40px auto; }
+    .grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+    .cell { width: 80px; height: 80px; border: 1px solid #ccc;
+            display:flex; align-items:center; justify-content:center; border-radius:10px; }
+    .cell img { max-width: 60px; }
+  </style>
+</head>
+<body>
+  <h1>등록 여부 확인</h1>
+  <input type="email" id="email" placeholder="이메일 입력">
+  <button onclick="check()">확인</button>
+  <div id="result" class="grid"></div>
+
+    
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbySjwS41SgRUOR2H6kOoXqEXdighjlh7Yy2a4BJQGlYlnFP8MlWkujdVpijB1f6ZsSi1A/exec";
+    const MONTHS = ["2025-05","2025-06","2025-07","2025-08","2025-09"];
+    const STAMPS = {
+      "2025-05": "may.jpeg",
+      "2025-06": "june.png",
+      "2025-07": "july.png",
+      "2025-08": "aug.jpeg",
+      "2025-09": "sep.jpeg"
+    };
+
+    async function check() {
+      const email = document.getElementById("email").value.trim();
+      if (!email) return alert("이메일 입력하세요");
+
+      const res = await fetch(`${API_URL}?email=${encodeURIComponent(email)}`);
+      const data = await res.json();
+
+      const grid = document.getElementById("result");
+      grid.innerHTML = "";
+      MONTHS.forEach(m => {
+        const div = document.createElement("div");
+        div.className = "cell";
+        if (data.months && data.months[m]) {
+          div.innerHTML = `<img src="${STAMPS[m]}" alt="stamp">`;
+        } else {
+          div.textContent = m;
+        }
+        grid.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>
